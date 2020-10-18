@@ -8,27 +8,66 @@ const Button = ({handleClick,text}) => (
 
 )
 
+const Buttons = (props) => {
+
+  const handleClick = (feedback) => {
+    console.log("pepe")
+    switch(feedback){
+      case "good":
+        props.setGood(props.good + 1);
+        props.setAverage(props.average + 1);
+        break;
+      case "neutral": 
+        props.setNeutral(props.neutral + 1);
+        props.setAverage(props.average);
+      break;
+      case "bad":
+        props.setBad(props.bad + 1);
+        props.setAverage(props.average - 1);
+        break;
+      default: 
+      break;
+    }
+
+    //props.setStats({good, neutral, bad, average})
+   
+
+  }
+
+  return (
+    <div><Button handleClick={() => handleClick("good")} text="good" />
+    <Button handleClick={() => handleClick("neutral")} text="neutral" />
+    <Button handleClick={() => handleClick("bad")} text="bad" /> </div>
+    )
+
+}
+
+
 const Statistics = (props) => {
 
   if (props.good === 0 && props.neutral === 0 && props.bad === 0){
-    return <></>
+    return <div>No feedback given</div>
   }
   
   var positivecalc = props.good / (props.good + props.neutral + props.bad) * 100;
  
   return (
-  <div>
-    <div><h1>statistics</h1></div>
+  
     <div>
-      good {props.good} <br />
-      neutral {props.neutral} <br />
-      bad {props.bad} <br />
-      all {props.good + props.neutral + props.bad} <br />
-      average {props.average} <br />
-      positive {positivecalc} %
+      <Statistic text="good" value={props.good}/> <br />
+      <Statistic text="neutral" value={props.neutral}/><br />
+      <Statistic text="bad" value={props.bad}/><br />
+      <Statistic text="all" value={props.good + props.neutral + props.bad}/><br />
+      <Statistic text="average" value={props.average}/><br />
+      <Statistic text="positive" value={positivecalc}/>  % <br />
+   
     </div>
-  </div>)
-}
+  )
+};
+
+
+
+const Statistic = ({text, value}) => {return (<span>{text} {value}</span>)}
 
 const App = () => {
   // save clicks of each button to its own state
@@ -37,49 +76,16 @@ const App = () => {
   const [bad, setBad] = useState(0)
   const [average, setAverage] = useState(0)
  // const [positive, setPositive] = useState(0)
-  const [stats, setStats] = useState(false)
+  //const [stats, setStats] = useState(false)
  
   
-
-
-  const handleClick = (feedback) => {
-    console.log("pepe")
-    switch(feedback){
-      case "good":
-        setGood(good + 1);
-        setAverage(average + 1);
-        break;
-      case "neutral": 
-        setNeutral(neutral + 1);
-        setAverage(average);
-      break;
-      case "bad":
-        setBad(bad + 1);
-        setAverage(average - 1);
-        break;
-      default: 
-      break;
-    }
-  
-    var positivecalc = good / (good+neutral+bad) * 100;
-   // console.log(positivecalc)
-   // setPositive(positivecalc);
-    setStats({good, neutral, bad, average})
-    console.log(stats)
-
-  }
-
-  //good: 1, neutral: 0, bad: -1
-
-  
-
   return (
     <div>
       <h1>give us feedback</h1>
-      <Button handleClick={() => handleClick("good")} text="good" />
-      <Button handleClick={() => handleClick("neutral")} text="neutral" />
-      <Button handleClick={() => handleClick("bad")} text="bad" />
+      <Buttons good={good} neutral={neutral} bad={bad} average={average} setGood={setGood} setNeutral={setNeutral} setBad={setBad} setAverage={setAverage} />
+     
       <p></p>
+      <div><h1>statistics</h1></div>
       <Statistics good={good} neutral={neutral} bad={bad} average={average}/>
     </div>
   )
