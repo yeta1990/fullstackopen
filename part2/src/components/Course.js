@@ -46,8 +46,8 @@ function revisedRandId() {
         {courses.map((course) => 
           { 
             return (
-              <div>
-            <Header key={revisedRandId()} course={course} />
+              <div key={revisedRandId()}>
+            <Header course={course} />
             <Content key={revisedRandId()} course={course} />
             <Total key={revisedRandId()} course={course} /> 
             </div>
