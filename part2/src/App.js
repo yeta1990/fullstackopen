@@ -1,62 +1,119 @@
 import React, { useState, useEffect } from 'react'
 
-import Filter from './components/Filter'
-import FormSubmitName from './components/FormSubmitName'
+
 
 import axios from 'axios'
 
+function getRandomString(length) {
+  var randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var result = '';
+  for ( var i = 0; i < length; i++ ) {
+      result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
+  }
+  return result;
+}
+
 const App = () => {
-  const initialState = () => axios.get('http://localhost:3001/persons').then(response => setPersons(response.data))
+  
+  const [search, setSearch] = useState('')
+  const [countriesFound, setCountriesFound] = useState([])
  
-  const [ persons, setPersons ] = useState([])
-  const [ newName, setNewName ] = useState('')
-  const [ newNumber, setNewNumber ] = useState('')
-  const [ personsFiltered, setPersonsFiltered] = useState([])
+
+
+  var filteredCountries = countriesFound
+
+
+
+  useEffect(() => {axios.get(search).then(response => setCountriesFound(response.data) )}, [search])
+
+  const handleSearchChange = (event) => {
+    setSearch('https://restcountries.eu/rest/v2/name/' + event.target.value)
+    console.log(search)
+    console.log(countriesFound)
+  
+    
+    //axios.get('https://restcountries.eu/rest/v2/name/' + search).then(response => setCountriesFound(response.data) )
+  }
 
   
-  useEffect(() => initialState, [])
-  
-  const submitPhoneBookForm = (event) => {
-    event.preventDefault()
-    const noteObject = {
-        name: newName,
-        number: newNumber
-    }
-    if (duplicates(newName).length > 0) return window.alert("duplicado");
-    setPersons(persons.concat(noteObject))
-    setNewName('');
-    setNewNumber('')
-  }
-
-  const handleNameStageChange = (event) => {
-    setNewName(event.target.value)
-
-  }
-  
-  const handleNumberStageChange = (event) => {
-    setNewNumber(event.target.value)
-  }
-
-  const duplicates = (onename) => {
-    const result = persons.filter(person => person.name === onename)
-    return result
-  }
-
-  const filter = (event) => {
-   setPersonsFiltered(persons.filter(person => person.name === event.target.value))
-    }
+ 
 
   return (
-    <div>
+    <div>    Busca un país: <input onChange={handleSearchChange} />
+  
+
+    <div key={getRandomString(5)}>
+                
+        <Countries filteredCountries={filteredCountries} />
         
-      <h2>Phonebook</h2>
-      <h3>filter</h3>
-      
-      <Filter filter={filter} persons={personsFiltered}/> 
-      <h3>add new</h3>
-      <FormSubmitName persons={persons} newName={newName} newNumber={newNumber} handleNumberStageChange={handleNumberStageChange} handleNameStageChange={handleNameStageChange} submitPhoneBookForm={submitPhoneBookForm}/>
+      </div>
+       
     </div>
   )
+
+
 }
+
+const Countries = ({filteredCountries}) => {
+
+    var fistro = filteredCountries
+
+    const disp = () => {
+      return (<div> 
+        {fistro.map((cnt) => (
+        
+        <p key={getRandomString(5)}>{cnt.name}</p>
+        ))}
+        </div>)
+     
+      
+    }
+
+
+
+    const allInfo = () => {
+      return (<div> 
+        {fistro.map((cnt) => (
+        <>
+        <h1 key={getRandomString(5)}>{cnt.name}</h1>
+        <span key={getRandomString(5)}>Capital: {cnt.capital}</span> <br />
+        <span key={getRandomString(5)}>Population: {cnt.population}</span>
+        <h2>languages</h2>
+        <ul>
+          {cnt.languages.map(lan => <li key={getRandomString(5)}> {lan.name}</li>)}
+         
+        </ul>
+        <img src={cnt.flag} width="300px" alt="flag"/>
+        </>
+        ))}
+        </div>)
+     
+      
+    }
+  
+
+    if (Array.isArray(fistro) && fistro.length === 1) {
+      console.log("pepe")
+      return (<div key={getRandomString(5)}>joder ya {allInfo()}</div>)
+    }
+
+    if (Array.isArray(fistro) && fistro.length > 10) {
+    
+      return (<div key={getRandomString(5)}>Demasiados</div>)
+    }
+
+    if (Array.isArray(fistro) && fistro.length < 11) {
+      console.log("pepe")
+      return (<div key={getRandomString(5)}>{disp()}</div>)
+    }
+
+    
+   return <div key={getRandomString(5)}>Busca</div>
+   
+
+
+}
+
+
 
 export default App
