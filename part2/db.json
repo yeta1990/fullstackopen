@@ -1,0 +1,36 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  },
+  "numbers": [
+    {
+      "name": "babadb",
+      "number": "5465621112",
+      "id": 4
+    },
+    {
+      "name": "fdasfasbga",
+      "number": "36545",
+      "id": 6
+    },
+    {
+      "name": "fgaba",
+      "number": "987",
+      "id": 7
+    }
+  ]
+}

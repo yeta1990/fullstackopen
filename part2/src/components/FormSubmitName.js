@@ -1,7 +1,6 @@
 
 
 import React from 'react'
-import Numbers from './Numbers'
 
 const FormSubmitName = (props) => {
     return (<div>
@@ -16,8 +15,8 @@ const FormSubmitName = (props) => {
           <button type="submit">add</button>
         </div>
       </form>
-      <h2>Numbers</h2>
-      <Numbers persons={props.persons}/>
+      
+     
       </div>)
 }
 

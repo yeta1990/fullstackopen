@@ -1,18 +1,24 @@
-import React, { useState } from 'react'
+
+import React, { useState, useEffect } from 'react'
 
 import Filter from './components/Filter'
 import FormSubmitName from './components/FormSubmitName'
-
+import noteService from './services/Note'
+import Numbers from './components/Numbers'
 const App = () => {
-  const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ]) 
+  const [ persons, setPersons ] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ personsFiltered, setPersonsFiltered] = useState([])
+
+  useEffect(() => {
+    const req = noteService.getAll()
+    req.then(res => {console.log(res)
+      setPersons(res)
+      
+    })
+  
+  }, [])
 
   const submitPhoneBookForm = (event) => {
     event.preventDefault()
@@ -20,10 +26,12 @@ const App = () => {
         name: newName,
         number: newNumber
     }
-    if (duplicates(newName).length > 0) return window.alert("duplicado");
-    setPersons(persons.concat(noteObject))
-    setNewName('');
-    setNewNumber('')
+    duplicates(noteObject)
+      setNewName('')
+      setNewNumber('')
+    
+    
+    
   }
 
   const handleNameStageChange = (event) => {
@@ -35,9 +43,39 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
-  const duplicates = (onename) => {
-    const result = persons.filter(person => person.name === onename)
-    return result
+  const duplicates = (personToCheck) => {
+    const result = persons.filter(person => person.name === personToCheck.name)
+    console.log("result ", result)
+    if (result.length > 0 & result[0].number === personToCheck.number) {
+      return window.alert("duplicado")}
+
+    else if (result.length > 0 & result[0].number !== personToCheck.number) {
+      const answerPutNumber = window.confirm("Este nombre ya existe pero has introducido otro teléfono, lo sustituimos?");
+      if (answerPutNumber) {
+          const noteToPut = {...personToCheck}
+          console.log("el id es " + result[0].id)
+          noteToPut['id'] = result[0].id
+          const reqput = noteService.putNote(noteToPut)
+          reqput.then(() => {
+              const req = noteService.getAll()
+              req.then(res => {console.log(res)
+                setPersons(res)
+                return true;
+              })
+            
+          })
+
+      }
+    }
+    else {
+        noteService.add(personToCheck).then(res => setPersons(persons.concat(personToCheck)));
+    }
+
+    
+    setNewName('');
+    setNewNumber('')
+
+  
   }
 
   const filter = (event) => {
@@ -52,7 +90,9 @@ const App = () => {
       
       <Filter filter={filter} persons={personsFiltered}/> 
       <h3>add new</h3>
-      <FormSubmitName persons={persons} newName={newName} newNumber={newNumber} handleNumberStageChange={handleNumberStageChange} handleNameStageChange={handleNameStageChange} submitPhoneBookForm={submitPhoneBookForm}/>
+      <FormSubmitName newName={newName} newNumber={newNumber} handleNumberStageChange={handleNumberStageChange} handleNameStageChange={handleNameStageChange} submitPhoneBookForm={submitPhoneBookForm}/>
+      <h2>Numbers</h2>
+      <Numbers persons={persons} setPersons={setPersons} />
     </div>
   )
 }
