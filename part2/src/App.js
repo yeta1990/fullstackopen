@@ -5,11 +5,14 @@ import Filter from './components/Filter'
 import FormSubmitName from './components/FormSubmitName'
 import noteService from './services/Note'
 import Numbers from './components/Numbers'
+import Notification from './components/Notification'
+
 const App = () => {
   const [ persons, setPersons ] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ personsFiltered, setPersonsFiltered] = useState([])
+  const [errorMessage, setErrorMessage] = useState([])
 
   useEffect(() => {
     const req = noteService.getAll()
@@ -26,12 +29,10 @@ const App = () => {
         name: newName,
         number: newNumber
     }
+    console.log(noteObject)
     duplicates(noteObject)
-      setNewName('')
-      setNewNumber('')
     
-    
-    
+        
   }
 
   const handleNameStageChange = (event) => {
@@ -43,10 +44,28 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+
   const duplicates = (personToCheck) => {
+    console.log("person to check", personToCheck)
     const result = persons.filter(person => person.name === personToCheck.name)
     console.log("result ", result)
-    if (result.length > 0 & result[0].number === personToCheck.number) {
+    console.log(result.length)
+
+
+    if (result.length === 0) {
+      noteService.add(personToCheck).then(res => setPersons(persons.concat(personToCheck)));
+    //  successNote();
+      setErrorMessage({
+        title: "Añadido un nuevo elemento",
+        text: 'Con nombre ' + personToCheck.name + ' y número ' + personToCheck.number
+      })
+      setTimeout(() => {setErrorMessage([])}, 5000)
+      setNewName('');
+      setNewNumber('');
+
+    }
+
+    else if (result.length > 0 & result[0].number === personToCheck.number) {
       return window.alert("duplicado")}
 
     else if (result.length > 0 & result[0].number !== personToCheck.number) {
@@ -57,6 +76,7 @@ const App = () => {
           noteToPut['id'] = result[0].id
           const reqput = noteService.putNote(noteToPut)
           reqput.then(() => {
+              
               const req = noteService.getAll()
               req.then(res => {console.log(res)
                 setPersons(res)
@@ -67,13 +87,10 @@ const App = () => {
 
       }
     }
-    else {
-        noteService.add(personToCheck).then(res => setPersons(persons.concat(personToCheck)));
-    }
+    
 
     
-    setNewName('');
-    setNewNumber('')
+ 
 
   
   }
@@ -87,7 +104,7 @@ const App = () => {
         
       <h2>Phonebook</h2>
       <h3>filter</h3>
-      
+      <Notification errorMessage={errorMessage} />
       <Filter filter={filter} persons={personsFiltered}/> 
       <h3>add new</h3>
       <FormSubmitName newName={newName} newNumber={newNumber} handleNumberStageChange={handleNumberStageChange} handleNameStageChange={handleNameStageChange} submitPhoneBookForm={submitPhoneBookForm}/>

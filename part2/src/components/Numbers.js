@@ -25,9 +25,10 @@ const Numbers = ({persons, setPersons}) => {
     if (persons.length === 0) {
         return <> </>
     }
-    return <div key={new Date()}>
+    return <div >
         {persons.map(person => {
-            return (<div key={person.id}> {person.name} {person.number} <button key={person.name} onClick={() => {tryToDelete(person.id)}}>delete</button></div>)
+            
+            return (<div key={person.number}> {person.name} {person.number} <button key={person.name} onClick={() => {tryToDelete(person.id)}}>delete</button></div>)
                
         }
     )}
