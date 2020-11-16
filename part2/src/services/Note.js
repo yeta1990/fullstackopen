@@ -1,6 +1,5 @@
 import axios from 'axios'
 
-
 const getAll = () => {
 
     const request = axios.get('http://localhost:3001/numbers')
@@ -29,9 +28,9 @@ const deleteNote = (id) => {
 
 
 const putNote = (noteobject) => {
-    console.log("sustituyendo el teléfono ", noteobject.numer)
+    console.log("sustituyendo el teléfono ", noteobject.number)
     const request = axios.put('http://localhost:3001/numbers/' + noteobject.id, noteobject)
-    return request.then(res => console.log(res.data)).catch(error => console.log(error))
+    return request.then(res => console.log(res.data))
 
 }
 

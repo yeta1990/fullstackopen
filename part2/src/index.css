@@ -32,3 +32,19 @@ div .notification {
   color:green;
 
 }
+
+
+div .notification-error {
+  background-color: rgb(226, 226, 226);
+
+  border: 3px solid red;
+  width: 80%;
+  padding: 20px;
+  margin-left: 20px;
+  margin-bottom: 35px;
+}
+
+.notification-error .text {
+  color:red;
+
+}

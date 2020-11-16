@@ -56,6 +56,7 @@ const App = () => {
       noteService.add(personToCheck).then(res => setPersons(persons.concat(personToCheck)));
     //  successNote();
       setErrorMessage({
+        type: "notification",
         title: "Añadido un nuevo elemento",
         text: 'Con nombre ' + personToCheck.name + ' y número ' + personToCheck.number
       })
@@ -83,7 +84,12 @@ const App = () => {
                 return true;
               })
             
-          })
+          }).catch(() => {setErrorMessage({
+            type: "error",
+            title: "Algo ha ido mal",
+            text: 'El nombre ' + personToCheck.name + ' ya había sido borrado de la base de datos'
+          })})
+          
 
       }
     }
